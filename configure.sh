@@ -3,7 +3,6 @@
 # Assign parameters to readable variables
 VNC_USER_PASSWORD="$1"
 VNC_PASSWORD="$2"
-NGROK_AUTH_TOKEN="$3"
 
 # Disable spotlight indexing to optimize performance
 sudo mdutil -i off -a
@@ -29,9 +28,5 @@ echo "$VNC_PASSWORD" | perl -we 'BEGIN { @k = unpack "C*", pack "H*", "1734516E8
 sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -restart -agent -console
 sudo /System/Library/CoreServices/RemoteManagement/ARDAgent.app/Contents/Resources/kickstart -activate
 
-# Fixed: Install ngrok using modern Homebrew syntax
-brew install --cask ngrok
-
-# Authenticate ngrok and launch a background TCP tunnel on VNC port 5900
-ngrok config add-authtoken "$NGROK_AUTH_TOKEN"
-ngrok tcp 5900 &
+# Start Pinggy TCP tunnel on VNC port 5900 (Prints the connection URL to the logs)
+ssh -p 443 -R0:localhost:5900 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null tcp.pinggy.io &
